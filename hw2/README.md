@@ -4,4 +4,4 @@ To compile:
 	Run g++ hw3.cpp -o {file name} in a command line
 
 To run:
-	Run ./{file name} {num_entires} {associativity} {input_memory_reference_file} in a command line
+	Run ./{file name} {Loop Bound} {Increment Value} in a command line`
