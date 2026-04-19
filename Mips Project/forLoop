@@ -1,0 +1,17 @@
+# Reg $1 = 1
+# Reg $2 = bound
+# Reg $8 = iterator
+# Reg $16 = num
+ADDI $1 $0 1
+ADDI $2 $0 4
+ADDI $8 $0 1
+NOP
+NOP
+ADD $16 $16 $8
+NOP
+NOP
+MUL $16 $16 $16
+NOP
+ADDI $8 $8 1
+BNE $2 $8 -9
+SW $16 0($0)

@@ -94,7 +94,12 @@ public:
             } else if (op == "BEQ") {
                 ss >> idex.rs >> idex.rt >> idex.imm;
                 if (regs[idex.rs] == regs[idex.rt]) pc += idex.imm; // Simplified branch
-            } else if (op == "J") {
+            } else if (op == "BNE") {
+				ss >> idex.rs >> idex.rt >> idex.imm;
+				if (regs[idex.rs] != regs[idex.rt]) pc += idex.imm;
+			} 
+			
+			else if (op == "J") {
                 ss >> idex.imm; pc = idex.imm;
             }
         }
@@ -229,7 +234,7 @@ int main(int argc, char*argv[]) {
 		
 		if (!line.empty() && line.find_first_not_of(" \t\n\v\f\r") != string::npos) {
             program.push_back(line);
-			cout << line << endl;
+			//cout << line << endl;
         }
 	}
 	file.close();
