@@ -46,7 +46,9 @@ public:
         if (memwb.regWrite && memwb.rd != 0) regs[memwb.rd] = memwb.data;
 
         // 4. MEMORY (MEM)
-        memwb.op = exmem.op; memwb.rd = exmem.rd; memwb.regWrite = exmem.regWrite;
+        memwb.op = exmem.op; 
+		memwb.rd = exmem.rd; 
+		memwb.regWrite = exmem.regWrite;
         if (exmem.memRead) memwb.data = mem[exmem.aluRes / 4];
         else if (exmem.memWrite) mem[exmem.aluRes / 4] = exmem.rtVal;
         else memwb.data = exmem.aluRes;
