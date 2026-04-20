@@ -40,6 +40,8 @@ public:
     MIPSProcessor(vector<string> p) : imem(p) {}
 
     void step() {
+		bool stall = false; //For Load-Use Hazard
+		
         // 5. WRITE BACK (WB)
         if (memwb.regWrite && memwb.rd != 0) regs[memwb.rd] = memwb.data;
 
@@ -48,6 +50,7 @@ public:
         if (exmem.memRead) memwb.data = mem[exmem.aluRes / 4];
         else if (exmem.memWrite) mem[exmem.aluRes / 4] = exmem.rtVal;
         else memwb.data = exmem.aluRes;
+
 
         // 3. EXECUTE (EX)
         exmem.op = idex.op; exmem.rd = idex.rd; exmem.rtVal = idex.v2;
@@ -63,8 +66,26 @@ public:
         else if (idex.op == "SRL") exmem.aluRes = idex.v2 >> idex.imm;
         else if (idex.op == "LW" || idex.op == "SW") exmem.aluRes = idex.v1 + idex.imm;
 
+		
+
+
         // 2. DECODE (ID)
         idex = ID_EX(); // Clear signals
+		
+		if (idex.op == "NOP" && exmem.op == "LW") {
+			stringstream ss_haz(ifid.instr);
+			string h_op;
+			int h_rd, h_rs, h_rt;
+			ss_haz >> h_op >> h_rd >> h_rs >> h_rt;
+			
+			if (exmem.rd != 0 && (exmem.rd == h_rs || exmem.rd == h_rt)) {
+				idex.op = "NOP";
+				pc--;
+				return;
+			}
+		}
+		
+		
         if (ifid.instr != "NOP") {
             stringstream ss(ifid.instr); string op; ss >> op;
             idex.op = op;
@@ -97,12 +118,17 @@ public:
             } else if (op == "BNE") {
 				ss >> idex.rs >> idex.rt >> idex.imm;
 				if (regs[idex.rs] != regs[idex.rt]) pc += idex.imm;
-			} 
-			
-			else if (op == "J") {
+			} else if (op == "J") {
                 ss >> idex.imm; pc = idex.imm;
             }
         }
+		
+		//DATA HAZARD PREVENTION
+		if (exmem.regWrite && exmem.rd != 0 && exmem.rd == idex.rs) idex.v1 = exmem.aluRes;
+		else if (memwb.regWrite && memwb.rd != 0 && memwb.rd == idex.rs) idex.v1 = memwb.data;
+		if (exmem.regWrite && exmem.rd != 0 && exmem.rd == idex.rt) idex.v2 = exmem.aluRes;
+		else if (memwb.regWrite && memwb.rd != 0 && memwb.rd == idex.rt) idex.v2 = memwb.data;
+
 
         // 1. FETCH (IF)
         if (pc < imem.size()) { ifid.instr = imem[pc]; ifid.pc = pc; pc++; }

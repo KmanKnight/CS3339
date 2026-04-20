@@ -1,0 +1,21 @@
+# --- PART 1: TEST ALU-TO-ALU FORWARDING ---
+# Tests if ADD can grab R1 from EX/MEM or MEM/WB without NOPs
+ADDI 1 0 10      # R1 = 10
+ADDI 2 0 5       # R2 = 5
+ADD  3 1 2       # R3 = R1 + R2 (Uses Forwarding from EX/MEM)
+ADD  4 3 1       # R4 = R3 + R1 (Uses Forwarding from EX/MEM)
+ADD  5 1 2       # R5 = R1 + R2 (Uses Forwarding from MEM/WB)
+
+# --- PART 2: TEST LW (LOAD-USE) HAZARD ---
+# Tests if your stall/bubble logic works
+ADDI 6 0 4       # Setup address
+SW   1 0 6       # Store 10 at Memory[4]
+#NOP
+LW   7 0 6       # R7 = Load from Memory[4] (R7 should become 10)
+ADD  8 7 2       # R8 = R7 + R2 (SHOULD TRIGGER STALL)
+                 # If stall works, Cycle count increases, PC stays same for 1 cycle
+
+# --- PART 3: TEST REGISTER $0 INTEGRITY ---
+# Tests if your forwarding correctly ignores $0
+ADDI 0 0 500     # Try to write 500 to R0 (Should remain 0)
+ADD  9 0 1       # R9 = R0 + R1 (Should be 10, NOT 510)

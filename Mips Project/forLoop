@@ -4,14 +4,8 @@
 # Reg $16 = num
 ADDI $1 $0 1
 ADDI $2 $0 4
-ADDI $8 $0 1
-NOP
-NOP
-ADD $16 $16 $8
-NOP
-NOP
-MUL $16 $16 $16
-NOP
 ADDI $8 $8 1
-BNE $2 $8 -9
+ADD $16 $16 $8
+MUL $16 $16 $16
+BNE $2 $8 -4
 SW $16 0($0)
