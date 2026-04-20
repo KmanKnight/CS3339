@@ -9,3 +9,10 @@ ADD $16 $16 $8
 MUL $16 $16 $16
 BNE $2 $8 -4
 SW $16 0($0)
+
+
+# num
+# for i=1 i<4 i++
+# num + i
+# num * num
+# loop

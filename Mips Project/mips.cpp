@@ -53,8 +53,13 @@ public:
 
 
         // 3. EXECUTE (EX)
-        exmem.op = idex.op; exmem.rd = idex.rd; exmem.rtVal = idex.v2;
-        exmem.regWrite = idex.regWrite; exmem.memRead = idex.memRead; exmem.memWrite = idex.memWrite;
+		
+        exmem.op = idex.op; 
+		exmem.rd = idex.rd; 
+		exmem.rtVal = idex.v2;
+        exmem.regWrite = idex.regWrite; 
+		exmem.memRead = idex.memRead; 
+		exmem.memWrite = idex.memWrite;
         
         if (idex.op == "ADD") exmem.aluRes = idex.v1 + idex.v2;
         else if (idex.op == "ADDI") exmem.aluRes = idex.v1 + idex.imm;
@@ -90,7 +95,7 @@ public:
             stringstream ss(ifid.instr); string op; ss >> op;
             idex.op = op;
             if (op == "ADD" || op == "SUB" || op == "MUL" || op == "AND" || op == "OR") {
-                ss >> idex.rd >> idex.rs >> idex.rt; //Takes the next three numbers and sets them to rd rs and rt in that order.
+                ss >> idex.rd >> idex.rs >> idex.rt;
                 idex.v1 = regs[idex.rs]; 
 				idex.v2 = regs[idex.rt]; 
 				idex.regWrite = true;
@@ -131,8 +136,11 @@ public:
 
 
         // 1. FETCH (IF)
-        if (pc < imem.size()) { ifid.instr = imem[pc]; ifid.pc = pc; pc++; }
-        else { ifid.instr = "NOP"; }
+        if (pc < imem.size()) { 
+			ifid.instr = imem[pc]; 
+			ifid.pc = pc; 
+			pc++; 
+		} else { ifid.instr = "NOP"; }
         cycle++;
     }
 
